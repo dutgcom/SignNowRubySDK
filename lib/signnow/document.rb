@@ -156,6 +156,39 @@ module SN
       end
     end
 
+    # Creates an invite for a user
+    #
+    # @param [Hash] params Parameters needed to create a signing link
+    # @return [String] a URL to the signing session
+    def self.create_invite(params)
+      raise ArgumentError, 'Missing params[:id]' if params[:id].nil?
+      raise ArgumentError, 'Missing params[:access_token]' if params[:access_token].nil?
+      raise ArgumentError, 'Missing params[:creator_email]' if params[:creator_email].nil?
+      raise ArgumentError, 'Missing params[:signer_email]' if params[:signer_email].nil?
+      raise ArgumentError, 'Missing params[:subject]' if params[:subject].nil?
+      raise ArgumentError, 'Missing params[:message]' if params[:message].nil?
+            
+      headers = { content_type: :json, accept: :json, authorization: "Bearer #{params[:access_token]}" }
+
+      body_params = {
+                      "to":[
+                              {"email": params[:signer_email], "role": params[:role] || "Signer 1", "order":1, "role_id": ""}
+                            ],
+                      "from": params[:creator_email],
+                      "cc": [],
+                      "subject": params[:subject],
+                      "message": params[:message]
+                    }
+      begin
+        response = RestClient.post("#{SN.Settings.base_url}/document/#{params[:id]}/invite?email=disable", body_params.to_json, headers)
+        JSON.parse(response.body)
+      rescue Exception => e
+        puts e.inspect
+        raise e.response.body
+      end
+    end
+
+
 
     # Creates a URL to a signing session for an invitee
     #
