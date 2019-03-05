@@ -4,7 +4,7 @@ require 'signnow'
 
 module SN
   class Document
-    attr_accessor :id, :texts, :signatures, :checks, :fields, :updated, :requests, :roles, :field_invites
+    attr_accessor :id, :texts, :signatures, :checks, :fields, :updated, :requests, :roles, :field_invites, :template, :document_name
 
     attr_accessor :filename, :user_token
 
@@ -34,6 +34,8 @@ module SN
     def to_json
       {
         id: @id,
+        template: @template,
+        document_name: @document_name,
         texts: @texts,
         signatures: @signatures,
         checks: @checks,
