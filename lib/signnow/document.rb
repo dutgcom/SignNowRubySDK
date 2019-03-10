@@ -44,7 +44,7 @@ module SN
         requests: @requests,
         field_invites: @field_invites,
         roles: @roles
-      }.reject! { |k, v| v.nil? }.to_json
+      }.reject{ |k, v| v.nil? }.to_json
     end
 
 
@@ -149,7 +149,9 @@ module SN
 
       begin
         response = RestClient.get("#{SN.Settings.base_url}/document/#{params[:id]}", headers)
-        SN::Document.from_json(response.body)
+        document = SN::Document.from_json(response.body)
+        document.user_token = params[:access_token] # Saving access token so if .save will be called on document we've just get it won't cause error
+        return document
       rescue Exception => e
         puts e.inspect
         raise e
@@ -257,8 +259,7 @@ module SN
           RestClient.put("#{SN.Settings.base_url}/document/#{@id}", to_json, headers)
           true
         rescue Exception => e
-          puts e.inspect
-          false
+          raise e.response #response will have reply body rest client get in case of 400 error - much more useful to debug
         end
       end
   end

@@ -3,7 +3,7 @@ require 'signnow'
 
 module SN
   class Field
-    attr_accessor :id, :x, :y, :width, :height, :page_number, :role, :required, :type, :element_id, :field_id, :label
+    attr_accessor :id, :x, :y, :width, :height, :page_number, :role, :required, :type, :element_id, :field_id, :label, :custom_defined_option, :prefilled_text
 
     def initialize(attrs = {})
       attrs.each do |key, value|
